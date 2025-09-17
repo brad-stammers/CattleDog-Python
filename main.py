@@ -32,9 +32,37 @@ Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-#define tables
-# class User(Base):
-#     __tablename__ = "users"
-#     id = Column(Integer, primary_key=True)
-#     name = Column(String)
-#     email = Column(String)
+app = Flask(__name__)
+app.config['SECRET_KEY'] = os.environ['FLASK_SECRET_KEY']
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_PATH']
+app.config['SQLALCHEMY_TRCK_NOTIFICATIONS'] = False
+
+@app.route("/")
+def home():
+    return render_template('home.html')
+
+@app.route("/books")
+def books():
+    all_books = session.query(Book).all()
+    list_books = [book.to_dict() for book in all_books]
+    return render_template('books.html', current_page="Books", all_books=list_books)
+
+@app.route("/films")
+def films():
+    return render_template('films.html', current_page="Films")
+
+@app.route("/television")
+def television():
+    return render_template('television.html', current_page="Television")
+
+@app.route("/games")
+def games():
+    return render_template('games.html', current_page="Games")
+
+@app.route("/music")
+def music():
+    return render_template('music.html', current_page="music")
+
+if __name__ == "__main__":
+    app.run(debug=True)
+

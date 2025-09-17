@@ -22,6 +22,12 @@ class Book(Base):
 
     def __repr__(self):
         return f"<Book(id={self.id}, title={self.title}, author={self.author}, publisher={self.publisher}, publish_date={self.publish_date}, genre={self.genre}, synopsis={self.synopsis}, series={self.series}, series_no={self.series_no}, media={self.media}, isbn={self.isbn}, cover_path={self.cover_path})>"
+    def to_dict(self):
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns}
+    def get_all_books(self, **kwargs):
+        session = kwargs.get("session")
+
+
 
 class Music(Base):
     __tablename__ = "music"
@@ -37,6 +43,8 @@ class Music(Base):
 
     def __repr__(self):
         return f"<Music(id={self.id}, title={self.title}, artist={self.artist}, release_date={self.release_date}, media={self.media}, genre={self.genre}, track_list={self.track_list}, cover_path={self.cover_path})>"
+    def to_dict(self):
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns}
 
 class Film(Base):
     __tablename__ = "films"
@@ -52,6 +60,8 @@ class Film(Base):
 
     def __repr__(self):
         return f"<Film(id={self.id}, title={self.title}, genre={self.genre}, year={self.year}, rating={self.rating}, media={self.media}, synopsis={self.synopsis}, cover_path={self.cover_path})>"
+    def to_dict(self):
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns}
 
 class Television(Base):
     __tablename__ = "television"
@@ -68,6 +78,8 @@ class Television(Base):
 
     def __repr__(self):
         return f"<Film(id={self.id}, title={self.title}, genre={self.genre}, year={self.year}, rating={self.rating}, media={self.media}, season={self.season}, episode_list={self.episode_list}, cover_path={self.cover_path})>"
+    def to_dict(self):
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns}
 
 class Game(Base):
     __tablename__ = "games"
@@ -86,4 +98,6 @@ class Game(Base):
 
     def __repr__(self):
         return f"<Film(id={self.id}, title={self.title}, genre={self.genre}, media={self.media}, franchise={self.franchise}, game_type={self.game_type}, platform={self.platform}, dlc={self.dlc}, expansions={self.expansions}, synopsis={self.synopsis}, cover_path={self.cover_path})>"
+    def to_dict(self):
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns}
 
