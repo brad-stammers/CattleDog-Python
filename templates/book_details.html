@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Book - {{ book.title }}{% endblock %}
+
+{% block content %}
+    <div class="max-w-sm mx-auto bg-blue-900/50 rounded-lg shadow-md overflow-hidden md:max-w-md mt-6">
+        <div class="p-6">
+          <h2 class="font-bold text-3xl mb-6 text-gray-100">{{ book.title }}</h2>
+          <p class="mt-2 text-gray-100 mt-6"><strong>Author</strong></p>
+          <p class="mt-2 text-gray-300">{{ book.author }}</p>
+          <p class="mt-1 text-gray-100 mt-6"><strong>Genres</strong></p>
+          <p class="mt-2 text-gray-300">{{ ", ".join(book.genre) }}</p>
+          <p class="mt-2 text-gray-100 mt-6"><strong>Series</strong></p>
+          <p class="mt-2 text-gray-300">{{ book.series }}</p>
+          <p class="mt-2 text-gray-100 mt-6"><strong>No in Series</strong></p>
+          <p class="mt-2 text-gray-300">{{ book.series_no }}</p>
+          <p class="mt-2 text-gray-100 mt-6"><strong>Format</strong></p>
+          <p class="mt-2 text-gray-300">{{ book.format }}</p>
+          <p class="mt-2 text-gray-100 mt-6"><strong>Publisher</strong></p>
+          <p class="mt-2 text-gray-300">{{ book.publisher }}</p>
+          <p class="mt-2 text-gray-100 mt-6"><strong>Published Date</strong></p>
+          <p class="mt-2 text-gray-300">{{ book.published_date }}</p>
+          <p class="mt-2 text-gray-100 mt-6"><strong>ISBN</strong></p>
+          <p class="mt-2 text-gray-300">{{ book.isbn }}</p>
+          <p class="mt-1 text-gray-100 mt-6"><strong>Synopsis</strong></p>
+          <p class="mt-2 text-gray-300">{{ book.synopsis }}</p>
+
+
+        </div>
+        <div class="p-6">
+            <a href="{{ url_for('books') }}" class="rounded-md bg-gray-700 px-4 py-2 text-sm font-medium text-gray-100 hover:bg-gray-600 m-4">
+          Close
+        </a>
+        </div>
+
+    </div>
+{% endblock %}

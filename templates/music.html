@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Music{% endblock %}
+{% block pageheader %}Music{% endblock %}
+
+{% block content %}
+<div class="overflow-x-auto">
+  <table class="min-w-full divide-y divide-gray-200">
+    <thead class="bg-blue-950">
+      <tr>
+        <th scope="col" class="px-6 py-3 text-left text-sm font-semibold text-gray-50">Title</th>
+        <th scope="col" class="px-6 py-3 text-left text-sm font-semibold text-gray-50">Artist</th>
+        <th scope="col" class="px-6 py-3 text-left text-sm font-semibold text-gray-50">Genre</th>
+        <th scope="col" class="px-6 py-3 text-left text-sm font-semibold text-gray-50">Media</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200 bg-blue-800/50">
+      {% for music in all_music %}
+          <tr>
+            <td class="px-6 py-4 text-sm text-gray-100 font-semibold">{{ music['title'] }}</td>
+            <td class="px-6 py-4 text-sm text-gray-100">{{ music['artist'] }}</td>
+            <td class="px-6 py-4 text-sm text-gray-100">{{ music['genre'] }}</td>
+            <td class="px-6 py-4 text-sm text-gray-100">{{ music['media'] }}</td>
+          </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

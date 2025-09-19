@@ -24,8 +24,7 @@ class Book(Base):
         return f"<Book(id={self.id}, title={self.title}, author={self.author}, publisher={self.publisher}, publish_date={self.publish_date}, genre={self.genre}, synopsis={self.synopsis}, series={self.series}, series_no={self.series_no}, media={self.media}, isbn={self.isbn}, cover_path={self.cover_path})>"
     def to_dict(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
-    def get_all_books(self, **kwargs):
-        session = kwargs.get("session")
+
 
 
 
@@ -90,7 +89,7 @@ class Game(Base):
     media: Mapped[str] = mapped_column(String(250), nullable=False)
     franchise: Mapped[str] = mapped_column(String(250), nullable=True)
     game_type: Mapped[str] = mapped_column(String(250), nullable=True)
-    platform: Mapped[str] = mapped_column(String(250), nullable=True)
+    platform: Mapped[str] = mapped_column(String(250), nullable=False)
     dlc: Mapped[list[str]] = mapped_column(ARRAY(String), nullable=True)
     expansions: Mapped[list[str]] = mapped_column(ARRAY(String), nullable=True)
     synopsis: Mapped[str] = mapped_column(String(500), nullable=True)
