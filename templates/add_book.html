@@ -8,27 +8,31 @@
   <h2 class="text-xl font-bold mb-6 text-gray-100">Add a Book</h2>
 
   <form method="POST" class="space-y-6" novalidate>
-    {{ form.hidden_tag() }}
+      <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+        {{ form.hidden_tag() }}
 
-    {{ render_field(form.title, "Title") }}
-    {{ render_field(form.author, "Author") }}
-    {{ render_field(form.publisher, "Publisher") }}
-    {{ render_field(form.publish_date, "Published Date") }}
-    {{ render_field(form.genre, "Genres") }}
-    {{ render_textarea(form.synopsis, "Synopsis") }}
-    {{ render_field(form.series, "Series") }}
-    {{ render_field(form.series_no, "No in Series") }}
-    {{ render_field(form.media, "Format") }}
-    {{ render_field(form.isbn, "ISBN") }}
-    {{ render_field(form.cover_path, "Cover Image") }}
+        {{ render_field(form.title, "Title") }}
+        {{ render_field(form.author, "Author") }}
+        {{ render_field(form.publisher, "Publisher") }}
+        {{ render_field(form.publish_date, "Published Date") }}
+        {{ render_field(form.genre, "Genres") }}
+        {{ render_textarea(form.synopsis, "Synopsis") }}
+        {{ render_field(form.series, "Series") }}
+        {{ render_field(form.series_no, "No in Series") }}
+        {{ render_field(form.media, "Format") }}
+        {{ render_field(form.isbn, "ISBN") }}
+        {{ render_field(form.cover_path, "Cover Image") }}
 
-    <!-- Actions -->
-    <div class="flex justify-left space-x-4">
-      {{ form.submit(class="rounded-md bg-blue-800 px-4 py-2 text-sm font-medium text-white shadow hover:bg-blue-500") }}
-      <a href="{{ url_for('books') }}" class="rounded-md bg-gray-700 px-4 py-2 text-sm font-medium text-gray-100 hover:bg-gray-600 mt-4">
-        Cancel
-      </a>
-    </div>
+        <!-- Actions -->
+        <div class="sm:col-span-4">
+            <div class="flex justify-left space-x-4">
+              {{ form.submit(class="rounded-md bg-blue-800 px-4 py-2 text-sm font-medium text-white shadow hover:bg-blue-500") }}
+              <a href="{{ url_for('books') }}" class="rounded-md bg-gray-700 px-4 py-2 text-sm font-medium text-gray-100 hover:bg-gray-600">
+                Cancel
+              </a>
+            </div>
+        </div>
+      </div>
   </form>
 </div>
     {% endblock %}

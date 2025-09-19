@@ -3,35 +3,43 @@
 {% block title %}Book - {{ book.title }}{% endblock %}
 
 {% block content %}
-    <div class="max-w-sm mx-auto bg-blue-900/50 rounded-lg shadow-md overflow-hidden md:max-w-md mt-6">
-        <div class="p-6">
-          <h2 class="font-bold text-3xl mb-6 text-gray-100">{{ book.title }}</h2>
-          <p class="mt-2 text-gray-100 mt-6"><strong>Author</strong></p>
-          <p class="mt-2 text-gray-300">{{ book.author }}</p>
-          <p class="mt-1 text-gray-100 mt-6"><strong>Genres</strong></p>
-          <p class="mt-2 text-gray-300">{{ ", ".join(book.genre) }}</p>
-          <p class="mt-2 text-gray-100 mt-6"><strong>Series</strong></p>
-          <p class="mt-2 text-gray-300">{{ book.series }}</p>
-          <p class="mt-2 text-gray-100 mt-6"><strong>No in Series</strong></p>
-          <p class="mt-2 text-gray-300">{{ book.series_no }}</p>
-          <p class="mt-2 text-gray-100 mt-6"><strong>Format</strong></p>
-          <p class="mt-2 text-gray-300">{{ book.format }}</p>
-          <p class="mt-2 text-gray-100 mt-6"><strong>Publisher</strong></p>
-          <p class="mt-2 text-gray-300">{{ book.publisher }}</p>
-          <p class="mt-2 text-gray-100 mt-6"><strong>Published Date</strong></p>
-          <p class="mt-2 text-gray-300">{{ book.published_date }}</p>
-          <p class="mt-2 text-gray-100 mt-6"><strong>ISBN</strong></p>
-          <p class="mt-2 text-gray-300">{{ book.isbn }}</p>
-          <p class="mt-1 text-gray-100 mt-6"><strong>Synopsis</strong></p>
-          <p class="mt-2 text-gray-300">{{ book.synopsis }}</p>
+<div class="max-w-sm mx-auto bg-blue-900/50 rounded-xl shadow-md overflow-hidden md:max-w-md mt-6">
+  <div class="p-6">
+    <h2 class="text-3xl font-semibold text-white mb-4">{{ book.title }}</h2>
 
+    <div class="grid grid-cols-[100px_1fr] gap-x-4 gap-y-2 text-gray-100">
+      <div class="font-medium text-white">Author:</div>
+      <div class="text-gray-300">{{ book.author }}</div>
 
-        </div>
-        <div class="p-6">
-            <a href="{{ url_for('books') }}" class="rounded-md bg-gray-700 px-4 py-2 text-sm font-medium text-gray-100 hover:bg-gray-600 m-4">
-          Close
-        </a>
-        </div>
+      <div class="font-medium text-white">Genres:</div>
+      <div class="text-gray-300">{{ book.genre | join(", ") }}</div>
 
+      <div class="font-medium text-white">Series:</div>
+      <div class="text-gray-300">{{ book.series }}</div>
+
+      <div class="font-medium text-white">No in Series:</div>
+      <div class="text-gray-300">{{ book.series_no }}</div>
+
+      <div class="font-medium text-white">Format:</div>
+      <div class="text-gray-300">{{ book.media }}</div>
+
+      <div class="font-medium text-white">Publisher:</div>
+      <div class="text-gray-300">{{ book.publisher }}</div>
+
+      <div class="font-medium text-white">Published:</div>
+      <div class="text-gray-300">{{ book.published_date }}</div>
+
+      <div class="font-medium text-white">ISBN:</div>
+      <div class="text-gray-300">{{ book.isbn }}</div>
+
+      <div class="font-medium text-white">Synopsis:</div>
+      <div class="text-gray-300">{{ book.synopsis }}</div>
     </div>
+
+    <!-- Optional buttons -->
+    <div class="mt-4 flex space-x-2">
+      <a href="{{ url_for('books') }}" class="px-3 py-1 rounded-md bg-blue-600 text-white text-sm hover:bg-blue-500">Close</a>
+    </div>
+  </div>
+</div>
 {% endblock %}
