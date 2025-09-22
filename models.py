@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, Text
 from sqlalchemy.orm import declarative_base, Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import ARRAY
 
@@ -12,7 +12,7 @@ class Book(Base):
     author: Mapped[str] = mapped_column(String(250), nullable=False)
     publisher: Mapped[str] = mapped_column(String(250), nullable=True)
     publish_date: Mapped[str] = mapped_column(DateTime, nullable=True)
-    genre: Mapped[list[str]] = mapped_column(ARRAY(String), nullable=False)
+    genre: Mapped[str] = mapped_column(Text, nullable=False)
     synopsis: Mapped[str] = mapped_column(String(500), nullable=True)
     series: Mapped[str] = mapped_column(String(250), nullable=True)
     series_no: Mapped[int] = mapped_column(Integer, nullable=True)
@@ -36,7 +36,7 @@ class Music(Base):
     artist: Mapped[str] = mapped_column(String(250), nullable=False)
     release_date: Mapped[str] = mapped_column(DateTime, nullable=True)
     media: Mapped[str] = mapped_column(String(250), nullable=False)
-    genre: Mapped[list[str]] = mapped_column(ARRAY(String), nullable=False)
+    genre: Mapped[str] = mapped_column(Text, nullable=False)
     track_list: Mapped[list[str]] = mapped_column(ARRAY(String), nullable=True)
     cover_path: Mapped[str] = mapped_column(String(250), nullable=True)
 
@@ -50,7 +50,7 @@ class Film(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(250), nullable=False)
-    genre: Mapped[list[str]] = mapped_column(ARRAY(String), nullable=False)
+    genre: Mapped[str] = mapped_column(Text, nullable=False)
     year: Mapped[int] = mapped_column(Integer, nullable=True)
     rating: Mapped[str] = mapped_column(String(250), nullable=True)
     media: Mapped[str] = mapped_column(String(250), nullable=False)
@@ -67,12 +67,12 @@ class Television(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(250), nullable=False)
-    genre: Mapped[list[str]] = mapped_column(ARRAY(String), nullable=False)
+    genre: Mapped[str] = mapped_column(Text, nullable=False)
     year: Mapped[int] = mapped_column(Integer, nullable=True)
     rating: Mapped[str] = mapped_column(String(250), nullable=True)
     media: Mapped[str] = mapped_column(String(250), nullable=False)
     season: Mapped[int] = mapped_column(Integer, nullable=True)
-    episode_list: Mapped[list[str]] = mapped_column(ARRAY(String), nullable=True)
+    episode_list: Mapped[str] = mapped_column(Text, nullable=True)
     cover_path: Mapped[str] = mapped_column(String(250), nullable=True)
 
     def __repr__(self):
@@ -85,18 +85,17 @@ class Game(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(250), nullable=False)
-    genre: Mapped[list[str]] = mapped_column(ARRAY(String), nullable=False)
+    genre: Mapped[str] = mapped_column(Text, nullable=False)
     media: Mapped[str] = mapped_column(String(250), nullable=False)
     franchise: Mapped[str] = mapped_column(String(250), nullable=True)
-    game_type: Mapped[str] = mapped_column(String(250), nullable=True)
     platform: Mapped[str] = mapped_column(String(250), nullable=False)
-    dlc: Mapped[list[str]] = mapped_column(ARRAY(String), nullable=True)
-    expansions: Mapped[list[str]] = mapped_column(ARRAY(String), nullable=True)
+    dlc: Mapped[str] = mapped_column(Text, nullable=True)
+    expansions: Mapped[str] = mapped_column(Text, nullable=True)
     synopsis: Mapped[str] = mapped_column(String(500), nullable=True)
     cover_path: Mapped[str] = mapped_column(String(250), nullable=True)
 
     def __repr__(self):
-        return f"<Film(id={self.id}, title={self.title}, genre={self.genre}, media={self.media}, franchise={self.franchise}, game_type={self.game_type}, platform={self.platform}, dlc={self.dlc}, expansions={self.expansions}, synopsis={self.synopsis}, cover_path={self.cover_path})>"
+        return f"<Film(id={self.id}, title={self.title}, genre={self.genre}, media={self.media}, franchise={self.franchise}, platform={self.platform}, dlc={self.dlc}, expansions={self.expansions}, synopsis={self.synopsis}, cover_path={self.cover_path})>"
     def to_dict(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
 

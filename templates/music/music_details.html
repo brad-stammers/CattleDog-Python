@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Music - {{ music.title }}{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto bg-blue-900/50 rounded-xl shadow-md overflow-hidden mt-6">
+  <div class="p-6">
+    <h2 class="text-3xl font-semibold text-white mb-4">{{ music.title }}</h2>
+    <div class="grid grid-cols-[1fr_auto] gap-x-8 text-gray-100">
+        <div class="grid grid-cols-[120px_1fr] gap-x-4 gap-y-2 text-gray-100">
+          <div class="font-medium text-white">Artist:</div>
+          <div class="text-gray-300">{{ music.artist }}</div>
+
+          <div class="font-medium text-white">Format:</div>
+          <div class="text-gray-300">{{ music.media }}</div>
+
+          <div class="font-medium text-white">Genres:</div>
+          <div class="text-gray-300">{{ music.genre }}</div>
+
+          <div class="font-medium text-white">Release Date:</div>
+          <div class="text-gray-300">{{ music.release_date }}</div>
+
+          <div class="font-medium text-white">Track List:</div>
+          <div class="text-gray-300">{{ music.track_list }}</div>
+        </div>
+        <div class="flex items-start">
+          <img src="{{ music.cover_path }}" alt="cover" class="max-w-[220px] rounded shadow">
+        </div>
+    </div>
+
+    <!-- Optional buttons -->
+    <div class="mt-4 flex space-x-2">
+      <a href="{{ url_for('music') }}" class="px-3 py-1 rounded-md bg-blue-600 text-white text-sm hover:bg-blue-500">Close</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

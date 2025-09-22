@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Television - {{ tv.title }}{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto bg-blue-900/50 rounded-xl shadow-md overflow-hidden mt-6">
+  <div class="p-6">
+    <h2 class="text-3xl font-semibold text-white mb-4">{{ tv.title }}</h2>
+    <div class="grid grid-cols-[1fr_auto] gap-x-8 text-gray-100">
+        <div class="grid grid-cols-[120px_1fr] gap-x-4 gap-y-2 text-gray-100">
+          <div class="font-medium text-white">Genres:</div>
+          <div class="text-gray-300">{{ tv.genre }}</div>
+
+          <div class="font-medium text-white">Year:</div>
+          <div class="text-gray-300">{{ tv.year }}</div>
+
+          <div class="font-medium text-white">Rating:</div>
+          <div class="text-gray-300">{{ tv.rating }}</div>
+
+          <div class="font-medium text-white">Format:</div>
+          <div class="text-gray-300">{{ tv.media }}</div>
+
+          <div class="font-medium text-white">Season:</div>
+          <div class="text-gray-300">{{ tv.season }}</div>
+
+          <div class="font-medium text-white">Episode List:</div>
+          <div class="text-gray-300">{{ tv.episode_list }}</div>
+        </div>
+        <div class="flex items-start">
+          <img src="{{ tv.cover_path }}" alt="cover" class="max-w-[220px] rounded shadow">
+        </div>
+    </div>
+    <!-- Optional buttons -->
+    <div class="mt-4 flex space-x-2">
+      <a href="{{ url_for('television') }}" class="px-3 py-1 rounded-md bg-blue-600 text-white text-sm hover:bg-blue-500">Close</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

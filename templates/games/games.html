@@ -12,15 +12,19 @@
         <th scope="col" class="px-6 py-3 text-left text-sm font-semibold text-gray-50">Platform</th>
         <th scope="col" class="px-6 py-3 text-left text-sm font-semibold text-gray-50">Genre</th>
         <th scope="col" class="px-6 py-3 text-left text-sm font-semibold text-gray-50">Media</th>
+        <th></th>
+        <th></th>
       </tr>
     </thead>
     <tbody class="divide-y divide-gray-200 bg-blue-800/50">
       {% for game in all_games %}
           <tr>
-            <td class="px-6 py-4 text-sm text-gray-100 font-semibold">{{ game['title'] }}</td>
+            <td class="px-6 py-4 text-sm text-gray-100 font-semibold"><a href="{{url_for('show_game', game_id=game.id) }}">{{ game['title'] }}</a></td>
             <td class="px-6 py-4 text-sm text-gray-100">{{ game['platform'] }}</td>
             <td class="px-6 py-4 text-sm text-gray-100">{{ game['genre'] }}</td>
             <td class="px-6 py-4 text-sm text-gray-100">{{ game['media'] }}</td>
+            <td><a href="{{ url_for('edit_game', game_id=game.id) }}" class="rounded-md bg-blue-700 px-4 py-2 text-sm font-medium text-gray-100 hover:bg-blue-500 m-4">Edit</a></td>
+            <td><a href="{{ url_for('delete_game', game_id=game.id) }}" class="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-gray-100 hover:bg-red-700 m-4">Delete</a></td>
           </tr>
       {% endfor %}
     </tbody>
