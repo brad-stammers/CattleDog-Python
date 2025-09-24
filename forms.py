@@ -161,7 +161,7 @@ class GameForm(FlaskForm):
 class MusicForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     artist = StringField('Artist', validators=[DataRequired()])
-    release_date = DateField("Release Date", validators=[Optional()])
+    release_date = IntegerField("Release Date", validators=[Optional()])
     media = SelectField("Format", choices=MUSIC_FORMATS, validators=[DataRequired()], coerce=str)
     genre = SelectMultipleField("Genre", choices=MUSIC_GENRES, validators=[DataRequired()])
     track_list = TextAreaField('Synopsis')

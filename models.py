@@ -34,7 +34,7 @@ class Music(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(250), nullable=False)
     artist: Mapped[str] = mapped_column(String(250), nullable=False)
-    release_date: Mapped[str] = mapped_column(DateTime, nullable=True)
+    release_date: Mapped[int] = mapped_column(Integer, nullable=True)
     media: Mapped[str] = mapped_column(String(250), nullable=False)
     genre: Mapped[str] = mapped_column(Text, nullable=False)
     track_list: Mapped[list[str]] = mapped_column(ARRAY(String), nullable=True)

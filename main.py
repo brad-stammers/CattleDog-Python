@@ -11,7 +11,11 @@
 ###
 ########################################################################################################################
 
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request, jsonify
+from werkzeug.utils import secure_filename
+from PIL import Image
+from pyzbar.pyzbar import decode
+import base64
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, TextAreaField, DateField
@@ -20,6 +24,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Base, Book, Music,Film, Television, Game
 from forms import BookForm, FilmForm, TelevisionForm, GameForm, MusicForm
+from lookups import music_lookup, music_release
+import io
 import os
 from dotenv import load_dotenv
 
@@ -37,6 +43,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ['FLASK_SECRET_KEY']
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_PATH']
 app.config['SQLALCHEMY_TRCK_NOTIFICATIONS'] = False
+
 
 @app.route("/")
 def home():
@@ -385,6 +392,48 @@ def delete_music(music_id):
     session.delete(album)
     session.commit()
     return redirect(url_for('music'))
+
+music_results = []
+
+@app.route("/music/search", methods=["GET", "POST"])
+def search_music():
+    global music_results
+    if request.method == "POST":
+        query = request.form.get("album")
+        music_results = music_lookup(query)
+    return render_template("music/music_search.html", results=music_results)
+
+@app.route("/music/select/<int:index>", methods=["GET", "POST"])
+def select_release(index):
+    global music_results
+    release = music_results[index]
+    tracks = [track.title for track in release.tracklist]
+
+    form = MusicForm(
+        title=release.title,
+        artist=release.artists[0].name,
+        release_date=release.year,
+        media=release.formats[0]['name'],
+        genre=release.genres,
+        cover_path=release.images[0]['uri'],
+        track_list = ",".join(tracks)
+    )
+    if form.validate_on_submit():
+        if form.submit.data:
+            tracks = [t.strip() for t in form.track_list.data.split(",")]
+            new_music = Music(
+                title=form.title.data,
+                artist=form.artist.data,
+                release_date=form.release_date.data,
+                media=form.media.data,
+                genre=", ".join(form.genre.data),
+                track_list=tracks,
+                cover_path=form.cover_path.data
+            )
+            session.add(new_music)
+            session.commit()
+        return redirect(url_for('music'))
+    return render_template('music/add_music.html', form=form)
 
 if __name__ == "__main__":
     app.run(debug=True)

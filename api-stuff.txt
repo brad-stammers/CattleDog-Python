@@ -1,0 +1,125 @@
+Discogs:
+
+- use python discogs client library
+pip install python3-discogs-client
+>>> import discogs_client
+>>> d = discogs_client.Client('ExampleApplication/0.1', user_token="my_user_token")
+Request:
+
+>>> results = d.search('Stockholm By Night', type='release')
+>>> results.pages
+1
+>>> artist = results[0].artists[0]
+>>> artist.name
+u'Persuader, The'
+
+Current token: lrWngprpmJtfUycnFOrSGMzDxIhhoDCQtPEUIrBL
+
+-----------------------------------------------------------------------------------------------------------
+Books:
+
+https://openlibrary.org/search.json?title=the+lord+of+the+rings&language=eng
+Get ISBN from docs[x][ia] starting with "isbn"
+use this to get cover image"
+https://covers.openlibrary.org/b/isbn/{isbn}-M.jpg
+
+------------------------------------------------------------------------------------------------------------
+
+TMDB:
+
+read access token:
+eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkOGZjNjBkNDcwNmFiMzNjOTEzNGFiMDE4ZDU0ZGY3MSIsIm5iZiI6MTc1NjY4MjYzNS42OTgsInN1YiI6IjY4YjRkOThiZmQxMzY5NDZiNzNmMDE0OCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.wed2KBzi6gBwc-H092hUMR8iLhr4itvM9a8gYG_I32I
+
+api key:
+d8fc60d4706ab33c9134ab018d54df71
+
+Request header:
+header 'Authorization: Bearer {read access token}' 'accept: application/json'
+
+requests:
+'https://api.themoviedb.org/3/search/tv?query=the%20west%20wing&include_adult=false&language=en-US&page=1'
+'https://api.themoviedb.org/3/search/movie?query=the%20matrix&include_adult=false&language=en-US&page=1'
+
+** check move list code from course to get cover image
+
+------------------------------------------------------------------------------------------------------------
+Games:
+
+ClientID:
+6jt0q9qyhvb7ad4kdtqlakkfwnguew
+
+Client secret:
+p19598odm864xdjivmhs3qvzy55png
+
+Header:
+Client-ID: Client ID
+Authorization: Bearer {secret}
+
+Request:
+https://api.igdb.com/v4/games
+
+   - cover returns an ID requiring another lookup
+   - genres returns an ID requiring another lookup
+   - franchise returns an ID requiring another lookup
+   - platform returns an ID requiring another lookup
+   - dlcs returns an ID requiring another lookup
+   - expansions returns an ID requiring another lookup
+
+Helper function to get an access token:
+    import requests
+    import time
+
+    CLIENT_ID = 'YOUR_CLIENT_ID'
+    CLIENT_SECRET = 'YOUR_CLIENT_SECRET'
+
+    # Store token and expiry
+    ACCESS_TOKEN = None
+    TOKEN_EXPIRES_AT = 0
+
+    def get_access_token():
+        global ACCESS_TOKEN, TOKEN_EXPIRES_AT
+        # Check if token is valid
+        if ACCESS_TOKEN and time.time() < TOKEN_EXPIRES_AT - 60:  # refresh 1 min before expiry
+            return ACCESS_TOKEN
+
+        # Request new token
+        url = 'https://id.twitch.tv/oauth2/token'
+        params = {
+            'client_id': CLIENT_ID,
+            'client_secret': CLIENT_SECRET,
+            'grant_type': 'client_credentials'
+        }
+        resp = requests.post(url, params=params)
+        resp.raise_for_status()
+        data = resp.json()
+        ACCESS_TOKEN = data['access_token']
+        TOKEN_EXPIRES_AT = time.time() + data['expires_in']
+        return ACCESS_TOKEN
+
+Use the function in authentication:
+    from flask import Flask, render_template, request
+
+    app = Flask(__name__)
+
+    @app.route('/', methods=['GET', 'POST'])
+    def index():
+        game_data = None
+        if request.method == 'POST':
+            game_name = request.form['game_name']
+            token = get_access_token()
+            headers = {
+                'Client-ID': CLIENT_ID,
+                'Authorization': f'Bearer {token}'
+            }
+            url = 'https://api.igdb.com/v4/games'
+            body = f'search "{game_name}"; fields name,cover.url; limit 1;'
+            response = requests.post(url, data=body, headers=headers)
+            if response.status_code == 200:
+                game_data = response.json()
+            else:
+                game_data = [{'name': 'Not Found', 'cover': {'url': ''}}]
+        return render_template('index.html', game_data=game_data)
+
+
+
+

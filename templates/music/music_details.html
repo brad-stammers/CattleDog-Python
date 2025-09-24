@@ -21,7 +21,7 @@
           <div class="text-gray-300">{{ music.release_date }}</div>
 
           <div class="font-medium text-white">Track List:</div>
-          <div class="text-gray-300">{{ music.track_list }}</div>
+          <div class="text-gray-300">{{ music.track_list | join(", ") }}</div>
         </div>
         <div class="flex items-start">
           <img src="{{ music.cover_path }}" alt="cover" class="max-w-[220px] rounded shadow">
