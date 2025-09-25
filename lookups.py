@@ -1,6 +1,6 @@
 import discogs_client
 import requests
-from flask import jsonify, request
+from flask import request
 import os
 import time
 from dotenv import load_dotenv
@@ -12,7 +12,7 @@ FILM_SEARCH_URL = "https://api.themoviedb.org/3/search/movie"
 FILM_DETAILS_URL = "https://api.themoviedb.org/3/movie/"
 TV_SEARCH_URL = "https://api.themoviedb.org/3/search/tv"
 TV_DETAILS_URL = "https://api.themoviedb.org/3/tv/"
-GAME_SEARCH_URL = "https://api.igdb.com/v4/games"
+GAME_SEARCH_URL = "https://api.rawg.io/api/games"
 
 def get_igdb_token():
     global ACCESS_TOKEN, TOKEN_EXPIRES_AT
@@ -36,10 +36,7 @@ def get_igdb_token():
 
 MUSIC_API_TOKEN = os.environ["DISCOGS_ACCESS_TOKEN"]
 FILM_API_TOKEN = os.environ["TMDB_ACCESS_TOKEN"]
-GAME_API_CLIENT_ID = os.environ['IGDB_CLIENT_ID']
-GAME_API_CLIENT_SECRET = os.environ['IGDB_CLIENT_SECRET']
-GAME_API_ACCESS_TOKEN = None
-GAME_API_TOKEN_EXPIRES_AT = 0
+GAME_API_KEY = os.environ['RAWG_API_KEY']
 
 FILM_API_HEADERS = {
     "Authorization": f"Bearer {os.environ['TMDB_ACCESS_TOKEN']}",
@@ -47,8 +44,7 @@ FILM_API_HEADERS = {
 }
 
 GAME_API_HEADERS = {
-    "Authorization": f"Bearer {GAME_API_ACCESS_TOKEN}",
-    "Client-ID": GAME_API_CLIENT_ID
+    "Accept": "application/json"
 }
 
 def music_lookup(title):
@@ -133,51 +129,59 @@ def television_genres(tv_id):
 
     return genres
 
-
-def get_game_access_token():
-    global GAME_API_ACCESS_TOKEN, GAME_API_TOKEN_EXPIRES_AT
-    # Check if token is valid
-    if GAME_API_ACCESS_TOKEN and time.time() < GAME_API_TOKEN_EXPIRES_AT - 60:  # refresh 1 min before expiry
-        return GAME_API_ACCESS_TOKEN
-
-    # Request new token
-    url = 'https://id.twitch.tv/oauth2/token'
-    params = {
-        'client_id': GAME_API_CLIENT_ID,
-        'client_secret': GAME_API_CLIENT_SECRET,
-        'grant_type': 'client_credentials'
-    }
-    resp = requests.post(url, params=params)
-    resp.raise_for_status()
-    data = resp.json()
-    GAME_API_ACCESS_TOKEN = data['access_token']
-    print(GAME_API_ACCESS_TOKEN)
-    GAME_API_TOKEN_EXPIRES_AT = time.time() + data['expires_in']
-    return GAME_API_ACCESS_TOKEN
-
 def game_lookup(title):
-    token = get_game_access_token()
-    print(token)
     results = []
-    query = f"""
-        search "{title}";
-        fields id, name, cover.image_id, genres.name, platforms.name, first_release_date;
-        limit 5;
-    """
-    print(query)
-    # if request.method == "GET":
-    if title:
-        resp = requests.post(
-            GAME_SEARCH_URL,
-            params={"data": query},
-            headers=GAME_API_HEADERS
-        )
-        print("Status Code:", resp.status_code)
-        print("Raw Response:", resp.text)
-        resp.raise_for_status()
-        print(resp)
-        if resp.status_code == 200:
-            results = resp.json()
-            print(results)
+    params = {
+        "key": GAME_API_KEY,
+        "search": title,          # the game title to search
+        "page_size": 5,           # limit number of results
+    }
+    if request.method == "POST":
+        if title:
+            resp = requests.get(
+                GAME_SEARCH_URL,
+                params=params,
+                headers=GAME_API_HEADERS
+            )
+            resp.raise_for_status()
+            if resp.status_code == 200:
+                results = resp.json()
 
     return results
+
+def game_dlc(game_id):
+    results = []
+    params = {
+        "key": GAME_API_KEY
+    }
+    if game_id:
+        resp = requests.get(
+            f"{GAME_SEARCH_URL}/{game_id}/additions",
+            params=params,
+            headers=GAME_API_HEADERS
+        )
+        resp.raise_for_status()
+        if resp.status_code == 200:
+            results = resp.json()
+
+    return results
+
+def game_details(game_id):
+    results = []
+    params = {
+        "key": GAME_API_KEY
+    }
+    if game_id:
+        resp = requests.get(
+            f"{GAME_SEARCH_URL}/{game_id}",
+            params=params,
+            headers=GAME_API_HEADERS
+        )
+        resp.raise_for_status()
+        if resp.status_code == 200:
+            results = resp.json()
+
+    return results
+
+
+
