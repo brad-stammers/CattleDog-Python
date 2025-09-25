@@ -27,17 +27,42 @@ BOOK_FORMATS = [
 
 FILM_GENRES = [
     ("Action", "Action"),
+    ("Adventure", "Adventure"),
+    ("Animation", "Animation"),
     ("Comedy", "Comedy"),
     ("Crime", "Crime"),
+    ("Documentary", "Documentary"),
     ("Drama", "Drama"),
+    ("Family", "Family"),
     ("Fantasy", "Fantasy"),
+    ("History", "History"),
     ("Horror", "Horror"),
+    ("Music", "Music"),
+    ("Mystery", "Mystery"),
     ("Romance", "Romance"),
-    ("Sci-Fi", "Sci-Fi"),
+    ("Science Fiction", "Science Fiction"),
     ("Sports", "Sports"),
     ("Superhero", "Superhero"),
     ("Thriller", "Thriller"),
     ("War", "War"),
+    ("Western", "Western")
+]
+TV_GENRES = [
+    ("Action & Adventure", "Action & Adbenture"),
+    ("Animation", "Animation"),
+    ("Comedy", "Comedy"),
+    ("Crime", "Crime"),
+    ("Documentary", "Documentary"),
+    ("Drama", "Drama"),
+    ("Family", "Family"),
+    ("Kids", "Kids"),
+    ("Mystery", "Mystery"),
+    ("News", "News"),
+    ("Reality", "Reality"),
+    ("Sci-Fi & Fantasy", "Sci-Fi & Fantasy"),
+    ("Soap", "Soap"),
+    ("Talk", "Talk"),
+    ("War & Politics", "War & Politics"),
     ("Western", "Western")
 ]
 FILM_RATINGS = [ (" ", " "), ("G", "G"), ("PG", "PG"), ("M", "M"), ("MA 15+", "MA 15+"), ("R 18+", "R 18+")]
@@ -107,7 +132,7 @@ class BookForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     author = StringField('Author', validators=[DataRequired()])
     publisher = StringField('Publisher')
-    publish_date = DateField("Published Date", validators=[Optional()])
+    publish_date = IntegerField("Published Date", validators=[Optional()])
     genre = SelectMultipleField("Genre", choices=BOOK_GENRES, validators=[DataRequired()])
     synopsis = TextAreaField('Synopsis')
     series = StringField("Series")
@@ -133,7 +158,7 @@ class FilmForm(FlaskForm):
 #television form
 class TelevisionForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
-    genre = SelectMultipleField("Genre", choices=FILM_GENRES, validators=[DataRequired()])
+    genre = SelectMultipleField("Genre", choices=TV_GENRES, validators=[DataRequired()])
     year = IntegerField("Year", validators=[Optional()])
     rating = SelectField("Rating", choices=FILM_RATINGS, validators=[Optional()], coerce=str)
     media = SelectField("Format", choices=FILM_FORMATS, validators=[DataRequired()], coerce=str)

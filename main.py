@@ -24,12 +24,13 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Base, Book, Music,Film, Television, Game
 from forms import BookForm, FilmForm, TelevisionForm, GameForm, MusicForm
-from lookups import music_lookup, music_release
+from lookups import music_lookup, book_lookup, film_lookup, film_genres, television_lookup, television_genres, game_lookup
 import io
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
+
 
 # initialise database
 engine = create_engine(os.environ['DATABASE_PATH'])
@@ -128,6 +129,86 @@ def delete_book(book_id):
     session.commit()
     return redirect(url_for('books'))
 
+book_results = []
+
+@app.route("/book/lookup", methods=["GET", "POST"])
+def lookup_book():
+    results = book_lookup("The Neutronium Alchemist")
+    print(results[0]["volumeInfo"]["title"])
+    print(results[0]["volumeInfo"]["authors"][0])
+    print(results[0]["volumeInfo"]["description"])
+    if "publisher" in results[0]["volumeInfo"]:
+        print(results[0]["volumeInfo"]["publisher"])
+    if "-" in results[0]["volumeInfo"]["publishedDate"]:
+        print(results[0]["volumeInfo"]["publishedDate"].split("-")[0])
+    else:
+        print(results[0]["volumeInfo"]["publishedDate"])
+    print(results[0]["volumeInfo"]["imageLinks"]["thumbnail"])
+    print(results[0]["volumeInfo"]["industryIdentifiers"][0]["identifier"])
+    return results
+
+@app.route("/book/search", methods=["GET", "POST"])
+def search_book():
+    global book_results
+    if request.method == "POST":
+        query = request.form.get("title")
+        book_results = book_lookup(query)
+    return render_template("books/book_search.html", results=book_results)
+
+@app.route("/book/select/<int:index>", methods=["GET", "POST"])
+def select_book(index):
+    global book_results
+    book = book_results[index]
+    if "publisher" in book["volumeInfo"]:
+        publisher = book["volumeInfo"]["publisher"]
+    else:
+        publisher = ""
+    if "-" in book["volumeInfo"]["publishedDate"]:
+        date = book["volumeInfo"]["publishedDate"].split("-")[0]
+    else:
+        date = book["volumeInfo"]["publishedDate"]
+    if "description" in book["volumeInfo"]:
+        desc = book["volumeInfo"]["description"]
+    else:
+        desc = ""
+    if "imageLinks" in book["volumeInfo"]:
+        cover = book["volumeInfo"]["imageLinks"]["thumbnail"]
+    else:
+        cover = ""
+    if "industryIdentifiers" in book["volumeInfo"]:
+        isbn = book["volumeInfo"]["industryIdentifiers"][0]["identifier"]
+    else:
+        isbn = ""
+
+    form = BookForm(
+        title=book["volumeInfo"]["title"],
+        author=book["volumeInfo"]["authors"][0],
+        publish_date=date,
+        publisher=publisher,
+        synopsis=desc,
+        isbn=isbn,
+        cover_path=cover
+    )
+    if form.validate_on_submit():
+        if form.submit.data:
+            new_book = Book(
+                title=form.title.data,
+                author=form.author.data,
+                publisher=form.publisher.data,
+                publish_date=form.publish_date.data,
+                genre=", ".join(form.genre.data),
+                synopsis=form.synopsis.data,
+                series=form.series.data,
+                series_no=form.series_no.data,
+                media=form.media.data,
+                isbn=form.isbn.data,
+                cover_path=form.cover_path.data
+            )
+            session.add(new_book)
+            session.commit()
+        return redirect(url_for('books'))
+    return render_template('books/add_book.html', form=form)
+
 # film routes
 @app.route("/films")
 def films():
@@ -191,6 +272,52 @@ def delete_film(film_id):
     session.delete(film)
     session.commit()
     return redirect(url_for('films'))
+
+film_results = []
+
+@app.route("/film/search", methods=["GET", "POST"])
+def search_film():
+    global film_results
+    if request.method == "POST":
+        query = request.form.get("title")
+        film_results = film_lookup(query)
+    return render_template("films/film_search.html", results=film_results)
+
+@app.route("/film/select/<int:index>", methods=["GET", "POST"])
+def select_film(index):
+    global film_results
+    film = film_results['results'][index]
+    genres = film_genres(film['id'])
+    print(genres)
+    if "-" in film["release_date"]:
+        date = film["release_date"].split("-")[0]
+    else:
+        date = film["release_date"]
+
+    form = FilmForm(
+        title=film["title"],
+        genre=genres,
+        year=date,
+        synopsis = film['overview'],
+        cover_path = f"https://image.tmdb.org/t/p/w500{film['poster_path']}"
+    )
+    if form.validate_on_submit():
+        if form.submit.data:
+            new_film = Film(
+                title=form.title.data,
+                genre=", ".join(form.genre.data),
+                year=form.year.data,
+                rating=form.rating.data,
+                media=form.media.data,
+                synopsis=form.synopsis.data,
+                cover_path=form.cover_path.data
+            )
+            session.add(new_film)
+            session.commit()
+        return redirect(url_for('films'))
+    return render_template('films/add_film.html', form=form)
+
+
 
 #television routes
 @app.route("/television")
@@ -258,6 +385,67 @@ def delete_television(tv_id):
     session.delete(tv)
     session.commit()
     return redirect(url_for('films'))
+
+tv_results = []
+
+@app.route("/television/lookup", methods=["GET", "POST"])
+def lookup_television():
+    results = television_lookup("The West Wing")
+    print(results['results'][0]['id'])
+    print(results['results'][0]['name'])
+    print(f"https://image.tmdb.org/t/p/w500{results['results'][0]['poster_path']}")
+    if "-" in results['results'][0]['first_air_date']:
+        print(results['results'][0]['first_air_date'].split("-")[0])
+    else:
+        print(results['results'][0]['first_air_date'])
+
+    genres = film_genres("688")
+    print(genres)
+
+    return genres
+
+@app.route("/television/search", methods=["GET", "POST"])
+def search_television():
+    global tv_results
+    if request.method == "POST":
+        query = request.form.get("title")
+        tv_results = television_lookup(query)
+    return render_template("television/television_search.html", results=tv_results)
+
+@app.route("/television/select/<int:index>", methods=["GET", "POST"])
+def select_television(index):
+    global tv_results
+    tv = tv_results['results'][index]
+    genres = television_genres(tv['id'])
+    print(genres)
+    if "-" in tv["first_air_date"]:
+        date = tv["first_air_date"].split("-")[0]
+    else:
+        date = tv["first_air_date"]
+
+    form = TelevisionForm(
+        title=tv["name"],
+        genre=genres,
+        year=date,
+        cover_path = f"https://image.tmdb.org/t/p/w500{tv['poster_path']}"
+    )
+    if form.validate_on_submit():
+        if form.submit.data:
+            new_tv = Television(
+                title=form.title.data,
+                genre=", ".join(form.genre.data),
+                year=form.year.data,
+                rating=form.rating.data,
+                media=form.media.data,
+                season=form.season.data,
+                episode_list=form.episode_list.data,
+                cover_path=form.cover_path.data
+            )
+            session.add(new_tv)
+            session.commit()
+        return redirect(url_for('television'))
+    return render_template('television/add_television.html', form=form)
+
 
 #game routes
 @app.route("/games")
@@ -329,7 +517,21 @@ def delete_game(game_id):
     session.commit()
     return redirect(url_for('games'))
 
+@app.route("/game/lookup", methods=["GET", "POST"])
+def lookup_game():
+    results = game_lookup("No Man's Sky")
+    # print(results['results'][0]['id'])
+    # print(results['results'][0]['name'])
+    # print(f"https://image.tmdb.org/t/p/w500{results['results'][0]['poster_path']}")
+    # if "-" in results['results'][0]['first_air_date']:
+    #     print(results['results'][0]['first_air_date'].split("-")[0])
+    # else:
+    #     print(results['results'][0]['first_air_date'])
 
+
+    return results
+
+#music routes
 @app.route("/music")
 def music():
     all_music = session.query(Music).all()
@@ -375,12 +577,13 @@ def edit_music(music_id):
     )
     if form.validate_on_submit():
         if form.submit.data:
+            tracks = [t.strip() for t in form.track_list.data.split(",")]
             album.title=form.title.data,
             album.artist=form.artist.data,
             album.release_date=form.release_date.data,
             album.media = form.media.data,
             album.genre = ", ".join(form.genre.data),
-            album.track_list=form.track_list.data,
+            album.track_list=tracks
             album.cover_path=form.cover_path.data
             session.commit()
         return redirect(url_for('music'))

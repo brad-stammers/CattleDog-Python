@@ -157,13 +157,13 @@
                   <a
                     class="rounded-md bg-blue-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                     {% if current_page == "Books" %}
-                        href="{{ url_for('add_new_book') }}"
+                        href="{{ url_for('search_book') }}"
                     {% endif %}
                     {% if current_page == "Films" %}
-                        href="{{ url_for('add_new_film') }}"
+                        href="{{ url_for('search_film') }}"
                     {% endif %}
                     {% if current_page == "Television" %}
-                        href="{{ url_for('add_new_television') }}"
+                        href="{{ url_for('search_television') }}"
                     {% endif %}
                     {% if current_page == "Games" %}
                         href="{{ url_for('add_new_game') }}"

@@ -45,6 +45,45 @@ requests:
 ------------------------------------------------------------------------------------------------------------
 Games:
 
+
+https://api.rawg.io/api/games
+
+API Key = 0710b81ce25f4330958a27c12d6f8d0d
+
+Sample:
+
+import os
+import requests
+
+RAWG_API_KEY = os.getenv("RAWG_API_KEY")  # put your key in .env or set manually
+BASE_URL = "https://api.rawg.io/api/games"
+
+def rawg_game_lookup(title):
+    params = {
+        "key": RAWG_API_KEY,
+        "search": title,          # the game title to search
+        "page_size": 5,           # limit number of results
+    }
+    headers = {
+        "Accept": "application/json"
+    }
+    resp = requests.get(BASE_URL, params=params, headers=headers)
+    resp.raise_for_status()
+    data = resp.json()
+    return data
+
+
+
+
+
+
+
+
+
+
+
+
+
 ClientID:
 6jt0q9qyhvb7ad4kdtqlakkfwnguew
 
